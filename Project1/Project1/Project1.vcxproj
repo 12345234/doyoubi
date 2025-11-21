@@ -134,9 +134,10 @@
     <ClCompile Include="device.cpp" />
     <ClCompile Include="DXGI.cpp" />
     <ClCompile Include="fence.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="window.cpp" />
     <ClCompile Include="renderTargets.cpp" />
     <ClCompile Include="swapchain.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="commandlist.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="fence.h" />
     <ClInclude Include="renderTargets.h" />
     <ClInclude Include="swapchain.h" />
+    <ClInclude Include="window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

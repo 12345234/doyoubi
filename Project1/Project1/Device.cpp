@@ -1,36 +1,31 @@
-#include<cassert>
-#include<dxgi1_6.h>
-#include<d3d12.h>
-#include "Dire.h"
 #include "device.h"
+#include <cassert>
 
-#pragma comment(lib,"dxgi.lib")
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxguid.lib")
 
-#pragma comment(lib,"d3d12.lib")
 
-ID3D12Device* Dx12::CreateD3D12Device(IDXGIAdapter1* adapter) {
-    ID3D12Device* device;
+device::~device() {
+    if (device_) {
+        device_->Release();
+        device_ = nullptr;
+    }
+}
 
-    HRESULT hr = D3D12CreateDevice(
-        adapter,                 
-        D3D_FEATURE_LEVEL_11_0,  
-        IID_PPV_ARGS(&device)    
-    );
-
+[[nodiscard]] bool device::create(const DXGI& dxgi) noexcept {
+    const auto hr = D3D12CreateDevice(dxgi.displayAdapter(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device_));
     if (FAILED(hr)) {
-        
-        hr = D3D12CreateDevice(
-            nullptr,  
-            D3D_FEATURE_LEVEL_11_0,
-            IID_PPV_ARGS(&device));
-
-        if (FAILED(hr)) {
-            OutputDebugString("Failed to create D3D12 Device\n");
-            return nullptr;
-        }
-
-        OutputDebugString("Using software adapter (WARP)\n");
+        assert(false && "デバイス作成に失敗");
+        return false;
     }
 
-    return device;
+    return true;
+}
+[[nodiscard]] ID3D12Device* device::get() const noexcept {
+    if (!device_) {
+        assert(false && "デバイスが未作成です");
+        return nullptr;
+    }
+
+    return device_;
 }
