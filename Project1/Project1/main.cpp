@@ -29,7 +29,7 @@ public:
         }
 
         // DXGI の生成
-        if (!dxgiInstance_.setDisplayAdapter()) {
+        if (!dxgiInstance_.setdisplayAdapter()) {
             assert(false && "DXGIのアダプタ設定に失敗しました");
             return false;
         }
@@ -170,7 +170,7 @@ private:
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     // アプリケーションクラスのインスタンスを生成
-    Application app;
+    main app;
 
     if (!app.initialize(hInstance)) {
         assert(false && "アプリケーションの初期化に失敗しました");

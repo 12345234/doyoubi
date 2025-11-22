@@ -8,6 +8,9 @@ public:
 
 	~DXGI();
 
+	[[nodiscard]] bool setdisplayAdapter() noexcept;
+
+
 	[[nodiscard]] IDXGIFactory4* factory() const noexcept;
 
 	[[nodiscard]] IDXGIAdapter1* displayAdapter() const noexcept;
