@@ -1,5 +1,4 @@
-#include "window.h"
-#include <string_view>
+﻿#include "window.h"
 namespace {
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         switch (msg) {

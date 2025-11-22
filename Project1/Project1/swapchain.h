@@ -1,8 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include"DXGI.h"
 #include"commandque.h"
-//#include "../window/window.h"
+#include "window.h"
 class swapchain
 {
 public:

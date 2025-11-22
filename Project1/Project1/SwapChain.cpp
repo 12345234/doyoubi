@@ -1,6 +1,7 @@
-// ƒXƒƒbƒvƒ`ƒFƒCƒ“§ŒäƒNƒ‰ƒX
+ï»¿// ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³åˆ¶å¾¡ã‚¯ãƒ©ã‚¹
 
 #include "swapchain.h"
+#include"window.h"
 
 #include <cassert>
 swapchain::~swapchain() {
@@ -11,36 +12,36 @@ swapchain::~swapchain() {
 }
 
 [[nodiscard]] bool swapchain::create(const DXGI& dxgi, const window& window, const commandque& commandQueue) noexcept {
-    // ƒEƒBƒ“ƒhƒEƒTƒCƒY‚ğæ“¾
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚ºã‚’å–å¾—
     const auto [w, h] = window.size();
 
     swapChainDesc = {};
-    swapChainDesc.BufferCount = 2;                                // ƒoƒbƒNƒoƒbƒtƒ@‚Ì”iƒ_ƒuƒ‹ƒoƒbƒtƒ@j
-    swapChainDesc.Width = w;                                // ƒoƒbƒNƒoƒbƒtƒ@‚Ì‰¡•
-    swapChainDesc.Height = h;                                // ƒoƒbƒNƒoƒbƒtƒ@‚Ìc•
-    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;       // ƒoƒbƒNƒoƒbƒtƒ@‚ÌƒtƒH[ƒ}ƒbƒg
-    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒg‚Æ‚µ‚Äg—p
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;    // –ˆƒtƒŒ[ƒ€‰æ–ÊXV‚·‚é‚Ì‚Å•`‰æ‚ªI‚í‚Á‚½‚çƒoƒbƒtƒ@‚ğ”jŠü
-    swapChainDesc.SampleDesc.Count = 1;                                // ƒ}ƒ‹ƒ`ƒTƒ“ƒvƒŠƒ“ƒO‚È‚µ
+    swapChainDesc.BufferCount = 2;                                // ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®æ•°ï¼ˆãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ï¼‰
+    swapChainDesc.Width = w;                                // ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®æ¨ªå¹…
+    swapChainDesc.Height = h;                                // ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®ç¸¦å¹…
+    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;       // ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // ãƒ¬ãƒ³ãƒ€ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¨ã—ã¦ä½¿ç”¨
+    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;    // æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ç”»é¢æ›´æ–°ã™ã‚‹ã®ã§æç”»ãŒçµ‚ã‚ã£ãŸã‚‰ãƒãƒƒãƒ•ã‚¡ã‚’ç ´æ£„
+    swapChainDesc.SampleDesc.Count = 1;                                // ãƒãƒ«ãƒã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ãªã—
 
     IDXGISwapChain1* tempSwapChain{};
     {
         const auto hr = dxgi.factory()->CreateSwapChainForHwnd(commandQueue.get(), window.handle(),
             &swapChainDesc, nullptr, nullptr, &tempSwapChain);
         if (FAILED(hr)) {
-            assert(false && "ƒXƒƒbƒvƒ`ƒFƒCƒ“‚Ìì¬‚É¸”s");
+            assert(false && "ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã®ä½œæˆã«å¤±æ•—");
             return false;
         }
     }
 
     {
-        // ˆê“I‚ÈƒXƒƒbƒvƒ`ƒFƒCƒ“‚ğ IDXGISwapChain3 ‚É•ÏŠ·
+        // ä¸€æ™‚çš„ãªã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã‚’ IDXGISwapChain3 ã«å¤‰æ›
         const auto hr = tempSwapChain->QueryInterface(IID_PPV_ARGS(&swapChain));
-        // ˆê“I‚ÈƒXƒƒbƒvƒ`ƒFƒCƒ“‚Í‰ğ•ú
+        // ä¸€æ™‚çš„ãªã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã¯è§£æ”¾
         tempSwapChain->Release();
 
         if (FAILED(hr)) {
-            assert(false && "ƒXƒƒbƒvƒ`ƒFƒCƒ“‚ÌƒAƒbƒvƒOƒŒ[ƒh‚É¸”s");
+            assert(false && "ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã®ã‚¢ãƒƒãƒ—ã‚°ãƒ¬ãƒ¼ãƒ‰ã«å¤±æ•—");
             return false;
         }
     }
@@ -50,7 +51,7 @@ swapchain::~swapchain() {
 
 [[nodiscard]] IDXGISwapChain3* swapchain::get() const noexcept {
     if (!swapChain) {
-        assert(false && "ƒXƒƒbƒvƒ`ƒFƒCƒ“‚ª–¢ì¬‚Å‚·");
+        assert(false && "ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ãŒæœªä½œæˆã§ã™");
         return nullptr;
     }
     return swapChain;
@@ -58,7 +59,7 @@ swapchain::~swapchain() {
 
 [[nodiscard]] const DXGI_SWAP_CHAIN_DESC1& swapchain::getDesc() const noexcept {
     if (!swapChain) {
-        assert(false && "ƒXƒƒbƒvƒ`ƒFƒCƒ“‚ª–¢ì¬‚Å‚·");
+        assert(false && "ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ãŒæœªä½œæˆã§ã™");
     }
     return swapChainDesc;
 }
