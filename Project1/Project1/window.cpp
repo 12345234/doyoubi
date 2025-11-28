@@ -9,7 +9,7 @@ namespace {
         return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 }
-[[nodiscard]] HRESULT window::create(HINSTANCE instance, int width, int height, string_view name) noexcept {
+[[nodiscard]] HRESULT window::create(HINSTANCE instance, int width, int height, std::string_view name) noexcept {
 
     WNDCLASS wc{};
     wc.lpfnWndProc = WindowProc;

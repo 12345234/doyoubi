@@ -4,6 +4,7 @@
 #include "command_allocator.h"
 class commandlist
 {
+public:
 	commandlist() = default;
 
 	~commandlist();

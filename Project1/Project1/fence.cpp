@@ -8,11 +8,6 @@ fence::~fence() {
 		fence_ = nullptr;
 	}
 }
-
-//---------------------------------------------------------------------------------
-/**
- * @brief	フェンスを作成する
- */
 [[nodiscard]] bool fence::create(const device& device) noexcept {
 
 	// フェンスの生成
@@ -30,11 +25,6 @@ fence::~fence() {
 	return true;
 }
 
-//---------------------------------------------------------------------------------
-/**
- * @brief	同期待ちを行う
- * @param fenceValue	フェンス値
- */
 void fence::wait(UINT64 fenceValue) const noexcept {
 	if (!fence_) {
 		assert(false && "フェンスが未作成です");
@@ -48,11 +38,6 @@ void fence::wait(UINT64 fenceValue) const noexcept {
 		WaitForSingleObject(waitGpuEvent, INFINITE);
 	}
 }
-
-//---------------------------------------------------------------------------------
-/**
- * @brief	フェンスを取得する
- */
 [[nodiscard]] ID3D12Fence* fence::get() const noexcept {
 	if (!fence_) {
 		assert(false && "フェンスが未作成です");

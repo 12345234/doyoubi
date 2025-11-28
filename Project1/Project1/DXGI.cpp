@@ -15,7 +15,7 @@ DXGI::~DXGI() {
         dxgiAdapter = nullptr;
     }
 }
-[[nodiscard]] bool DXGI::setDisplayAdapter() noexcept {
+[[nodiscard]] bool DXGI::setdisplayAdapter() noexcept {
 #if _DEBUG
     ID3D12Debug* debug;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug)))) {
