@@ -10,9 +10,9 @@ DXGI::~DXGI() {
         dxgiFactory = nullptr;
     }
 
-    if (dxgiAdapter) {
-        dxgiAdapter->Release();
-        dxgiAdapter = nullptr;
+    if (dxgiAdapter_) {
+        dxgiAdapter_->Release();
+        dxgiAdapter_ = nullptr;
     }
 }
 [[nodiscard]] bool DXGI::setdisplayAdapter() noexcept {
@@ -59,11 +59,11 @@ DXGI::~DXGI() {
                 continue;
             }
 
-            dxgiAdapter = dxgiAdapter;
+            dxgiAdapter_ = dxgiAdapter;
             break;
         }
 
-        if (!dxgiAdapter) {
+        if (!dxgiAdapter_) {
             assert(false && "アダプタの取得に失敗");
             return false;
         }
@@ -82,10 +82,10 @@ DXGI::~DXGI() {
 
 
 [[nodiscard]] IDXGIAdapter1* DXGI::displayAdapter() const noexcept {
-    if (!dxgiAdapter) {
+    if (!dxgiAdapter_) {
         assert(false && "ディスプレイアダプターが未作成です");
         return nullptr;
     }
 
-    return dxgiAdapter;
+    return dxgiAdapter_;
 }

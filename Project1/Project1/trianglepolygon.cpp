@@ -48,8 +48,6 @@ trianglepolygon::~trianglepolygon() {
     // 頂点データのサイズ
     const auto vertexBufferSize = sizeof(triangleVertices);
 
-    // ヒープの設定を指定
-    // CPU からアクセス可能なメモリを利用する為の設定
     D3D12_HEAP_PROPERTIES heapProperty{};
     heapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -84,12 +82,8 @@ trianglepolygon::~trianglepolygon() {
         return false;
     }
 
-    // 頂点バッファにデータを転送する
-    // CPU からアクセス可能なアドレスを取得
     Vertex* data{};
 
-    // バッファをマップ（CPUからアクセス可能にする）
-    // vertexBuffer_ を直接利用するのではなく、data を介して更新するイメージ
     res = vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&data));
     if (FAILED(res)) {
         assert(false && "頂点バッファのマップに失敗");
@@ -99,8 +93,6 @@ trianglepolygon::~trianglepolygon() {
     // 頂点データをコピー
     memcpy_s(data, vertexBufferSize, triangleVertices, vertexBufferSize);
 
-    // コピーが終わったのでマップ解除（CPUからアクセス不可にする）
-    // ここまで来たら GPU が利用するメモリ領域（VRAM）にコピー済みなので、triangleVertices は不要になる
     vertexBuffer->Unmap(0, nullptr);
 
     // 頂点バッファビューの設定
@@ -138,7 +130,6 @@ trianglepolygon::~trianglepolygon() {
     resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
     resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-    // インデックスバッファの生成
     auto res = device.get()->CreateCommittedResource(
         &heapProperty,
         D3D12_HEAP_FLAG_NONE,
@@ -151,7 +142,6 @@ trianglepolygon::~trianglepolygon() {
         return false;
     }
 
-    // インデックスバッファにデータを転送する
     uint16_t* data{};
     res = indexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&data));
     if (FAILED(res)) {
@@ -160,10 +150,10 @@ trianglepolygon::~trianglepolygon() {
     }
 
     memcpy_s(data, indexBufferSize, triangleIndices, indexBufferSize);
-    // ここまで来たら GPU が利用するメモリ領域（VRAM）にコピー済みなので、triangleIndices は不要になる
+   
     indexBuffer->Unmap(0, nullptr);
 
-    // インデックスバッファビュー作成
+
     indexbufferview.BufferLocation = indexBuffer->GetGPUVirtualAddress();
     indexbufferview.SizeInBytes = indexBufferSize;
     indexbufferview.Format = DXGI_FORMAT_R16_UINT;  // triangleIndices の型が 16bit 符号なし整数なので R16_UINT

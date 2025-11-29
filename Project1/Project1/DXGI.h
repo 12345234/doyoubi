@@ -17,6 +17,6 @@ public:
 
 private:
 	IDXGIFactory4* dxgiFactory{}; 
-	IDXGIAdapter1* dxgiAdapter{};
+	IDXGIAdapter1* dxgiAdapter_{};
 };
 
