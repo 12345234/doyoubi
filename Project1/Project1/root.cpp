@@ -3,7 +3,6 @@
 #include <cassert>
 
 root::~root() {
-    // コマンドアロケータの解放
     if (rootSignature_) {
         rootSignature_->Release();
         rootSignature_ = nullptr;
@@ -18,8 +17,6 @@ root::~root() {
     rootSignatureDesc.NumStaticSamplers = 0;
     rootSignatureDesc.pStaticSamplers = nullptr;
     rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-    // ルートシグネチャのシリアライズ
     ID3DBlob* signature{};
     auto      res = D3D12SerializeRootSignature(
         &rootSignatureDesc,
@@ -32,7 +29,6 @@ root::~root() {
         assert(false && "ルートシグネチャのシリアライズに失敗");
     }
     else {
-        // ルートシグネチャの生成
         res = device.get()->CreateRootSignature(
             0,
             signature->GetBufferPointer(),

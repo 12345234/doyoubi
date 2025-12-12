@@ -177,25 +177,25 @@ public:
     }
 
 private:
-    window           windowInstance_{};               // ウィンドウインスタンス
-    DXGI             dxgiInstance_{};                 // DXGI インスタンス
-    device           deviceInstance_{};               // デバイスインスタンス
-    commandque     commandQueueInstance_{};         // コマンドキューインスタンス
-    swapchain        swapChainInstance_{};            // スワップチェインインスタンス
-    DescriptorHeap   descriptorHeapInstance_{};       // ディスクリプタヒープインスタンス
-    renderTargets     renderTargetInstance_{};         // レンダーターゲットインスタンス
-    command_allocator commandAllocatorInstance_[2]{};  // コマンドアロケータインスタンス
-    commandlist      commandListInstance_{};          // コマンドリストインスタンス
+    window            windowInstance_{};              
+    DXGI              dxgiInstance_{};                 
+    device            deviceInstance_{};               
+    commandque        commandQueueInstance_{};         
+    swapchain         swapChainInstance_{};            
+    DescriptorHeap    descriptorHeapInstance_{};       
+    renderTargets     renderTargetInstance_{};        
+    command_allocator commandAllocatorInstance_[2]{}; 
+    commandlist       commandListInstance_{};          
 
-    fence  fenceInstance_{};       // フェンスインスタンス
-    UINT64 frameFenceValue_[2]{};  // 現在のフレームのフェンス値
-    UINT64 nextFenceValue_ = 1;    // 次のフレームのフェンス値
+    fence  fenceInstance_{};       
+    UINT64 frameFenceValue_[2]{};  
+    UINT64 nextFenceValue_ = 1;   
 
 
-    root      rootSignatureInstance_{};       // ルートシグネチャインスタンス
-    shader             shaderInstance_{};              // シェーダーインスタンス
-    pipline piplineStateObjectInstance_{};  // パイプラインステートオブジェクトインスタンス
-    trianglepolygon    trianglePolygonInstance_{};     // 三角形ポリゴンインスタンス
+    root               rootSignatureInstance_{};       
+    shader             shaderInstance_{};             
+    pipline            piplineStateObjectInstance_{};  
+    trianglepolygon    trianglePolygonInstance_{};     
 };
 
 

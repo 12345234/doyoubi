@@ -13,13 +13,10 @@ namespace {
 }  
 
 trianglepolygon::~trianglepolygon() {
-    // 頂点バッファの解放
     if (vertexBuffer) {
         vertexBuffer->Release();
         vertexBuffer = nullptr;
     }
-
-    // インデックスバッファの解放
     if (indexBuffer) {
         indexBuffer->Release();
         indexBuffer = nullptr;
@@ -44,8 +41,6 @@ trianglepolygon::~trianglepolygon() {
         { {0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // 右下頂点（緑色）
         {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}  // 左下頂点（青色）
     };
-
-    // 頂点データのサイズ
     const auto vertexBufferSize = sizeof(triangleVertices);
 
     D3D12_HEAP_PROPERTIES heapProperty{};
