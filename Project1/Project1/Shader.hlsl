@@ -1,8 +1,20 @@
+
 struct VSInput
 {
     float3 position : POSITION;
     float4 color : COLOR;
 };
+cbuffer ConstantBuffer:register(b0)
+{
+    matrix view;
+    matrix projection;
+};
+cbuffer ConstantBuffer:register(b1)
+{
+    matrix world;
+    matrix color;
+};
+
 struct VSOutput
 {
     float4 position : SV_Position;
@@ -16,8 +28,13 @@ struct PSInput
 VSOutput vs(VSInput input)
 {
     VSOutput output;
+    float4 pos= float4(input.positin,1.0f);
+
+    pos=mul(pos,world);
+    pos=mul(pos,view);
+    pos=mul(pos,projection);
     
-    output.position = float4(input.position, 1.0f);
+    output.position = pos;
     
     output.color = input.color;
     
