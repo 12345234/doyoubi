@@ -137,6 +137,7 @@
     <ClCompile Include="DXGI.cpp" />
     <ClCompile Include="fence.cpp" />
     <ClCompile Include="pipline.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="root.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="trianglepolygon.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="DXGI.h" />
     <ClInclude Include="fence.h" />
     <ClInclude Include="pipline.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="renderTargets.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="root.h" />
