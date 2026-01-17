@@ -16,7 +16,7 @@ public:
 	[[nodiscard]] D3D12_COMMAND_LIST_TYPE getType() const noexcept;
 
 private:
-	ID3D12CommandAllocator* commandAllocator_{};
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_{};
 	D3D12_COMMAND_LIST_TYPE type_{};
 };
 

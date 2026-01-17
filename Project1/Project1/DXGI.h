@@ -1,12 +1,14 @@
 #pragma once
 #include <d3d12.h>
 #include<dxgi1_4.h>
+#include<wrl/client.h>
+
 class DXGI
 {
 public:
 	DXGI() = default;
 
-	~DXGI();
+	~DXGI() = default;
 
 	[[nodiscard]] bool setdisplayAdapter() noexcept;
 
@@ -16,7 +18,7 @@ public:
 	[[nodiscard]] IDXGIAdapter1* displayAdapter() const noexcept;
 
 private:
-	IDXGIFactory4* dxgiFactory{}; 
-	IDXGIAdapter1* dxgiAdapter_{};
+	Microsoft::WRL::ComPtr<IDXGIFactory4> dxgiFactory{};
+	Microsoft::WRL::ComPtr<IDXGIAdapter1> dxgiAdapter_{};
 };
 

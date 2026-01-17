@@ -1,12 +1,13 @@
 #pragma once
 #include "device.h"
+#include <wrl/client.h>
 class shader final {
 public:
 
     shader() = default;
-    ~shader();
+    ~shader() = default;
 
-    [[nodiscard]] bool create(const device& device) noexcept;
+    [[nodiscard]] bool create() noexcept;
 
 
     [[nodiscard]] ID3DBlob* vertexShader() const noexcept;
@@ -16,6 +17,6 @@ public:
 
 
 private:
-    ID3DBlob* vertexShader_{};  /// 頂点シェーダ
-    ID3DBlob* pixelShader_{};   /// ピクセルシェーダ
+    Microsoft::WRL::ComPtr<ID3DBlob>  vertexShader_{};  /// 頂点シェーダ
+    Microsoft::WRL::ComPtr<ID3DBlob> pixelShader_{};   /// ピクセルシェーダ
 };

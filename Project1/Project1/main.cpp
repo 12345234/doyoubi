@@ -32,7 +32,7 @@ public:
             return false;
         }
         // デバイスの生成
-        if (!deviceInstance_.create(dxgiInstance_)) {
+        if (!deviceInstance_.create()) {
             assert(false && "デバイスの作成に失敗しました");
             return false;
         }
@@ -86,12 +86,12 @@ public:
             return false;
         }
         // シェーダーの生成
-        if (!shaderInstance_.create(deviceInstance_)) {
+        if (!shaderInstance_.create()) {
             assert(false && "シェーダーの作成に失敗しました");
             return false;
         }
         // パイプラインステートオブジェクトの生成
-        if (!piplineStateObjectInstance_.create(deviceInstance_, shaderInstance_, rootSignatureInstance_)) {
+        if (!piplineStateObjectInstance_.create(shaderInstance_, rootSignatureInstance_)) {
             assert(false && "パイプラインステートオブジェクトの作成に失敗しました");
             return false;
         }

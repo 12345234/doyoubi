@@ -6,20 +6,8 @@
 #include <D3Dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 
-shader::~shader() {
-    if (vertexShader_) {
-        vertexShader_->Release();
-        vertexShader_ = nullptr;
-    }
-
-    if (pixelShader_) {
-        pixelShader_->Release();
-        pixelShader_ = nullptr;
-    }
-}
-
-[[nodiscard]] bool shader::create(const device& device) noexcept {
-    const std::string  filePath = "../Project1/shader.hlsl";
+[[nodiscard]] bool shader::create() noexcept {
+    const std::string  filePath = "../Project1/Shader.hlsl";
     const std::wstring temp = std::wstring(filePath.begin(), filePath.end());
 
     ID3DBlob* error{};
@@ -47,7 +35,7 @@ shader::~shader() {
         assert(false && "頂点シェーダが未作成です");
     }
 
-    return vertexShader_;
+    return vertexShader_.Get();
 }
 
 [[nodiscard]] ID3DBlob* shader::pixelShader() const noexcept {
@@ -55,5 +43,5 @@ shader::~shader() {
         assert(false && "ピクセルシェーダが未作成です");
     }
 
-    return pixelShader_;
+    return pixelShader_.Get();
 }

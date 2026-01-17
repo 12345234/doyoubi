@@ -2,15 +2,7 @@
 #include "pipline.h"
 #include <cassert>
 
-pipline::~pipline() {
-
-    if (pipelineState_) {
-        pipelineState_->Release();
-        pipelineState_ = nullptr;
-    }
-}
-
-[[nodiscard]] bool pipline::create(const device& device, const shader& shader, const root& rootSignature) noexcept {
+[[nodiscard]] bool pipline::create( const shader& shader, const root& rootSignature) noexcept {
     D3D12_INPUT_ELEMENT_DESC inputElementDescs[] = {
         {"POSITION", 0,    DXGI_FORMAT_R32G32B32_FLOAT, 0,  0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
         {   "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
@@ -63,7 +55,7 @@ pipline::~pipline() {
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
     psoDesc.SampleDesc.Count = 1;
-    auto res = device.get()->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&pipelineState_));
+    auto res = device::instance().get()->CreateGraphicsPipelineState(&psoDesc,IID_PPV_ARGS(&pipelineState_));
     if (FAILED(res)) {
         assert(false && "パイプラインステートの作成に失敗");
     }
@@ -75,5 +67,5 @@ pipline::~pipline() {
     if (!pipelineState_) {
         assert(false && "パイプラインステートが未作成です");
     }
-    return pipelineState_;
+    return pipelineState_.Get();
 }

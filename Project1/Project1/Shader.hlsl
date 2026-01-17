@@ -28,7 +28,7 @@ struct PSInput
 VSOutput vs(VSInput input)
 {
     VSOutput output;
-    float4 pos= float4(input.positin,1.0f);
+    float4 pos = float4(input.position, 1.0f);
 
     pos=mul(pos,world);
     pos=mul(pos,view);

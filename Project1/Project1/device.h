@@ -2,18 +2,26 @@
 
 #include"DXGI.h"
 #include<d3d12.h>
+#include<wrl/client.h>
 class device
 {
 public:
+	static device& instance()
+	{
+		static device instance;
+		return instance;
+	}
+
 	device() = default;
 
-	~device();
+	~device() = default;
 
-	[[nodiscard]] bool create(const DXGI& dxgi) noexcept;
+	[[nodiscard]] bool create() noexcept;
 
 	[[nodiscard]] ID3D12Device* get() const noexcept;
 
 private:
-	ID3D12Device* device_;
+	DXGI   dxgiInstance;
+	Microsoft::WRL::ComPtr<ID3D12Device> device_;
 };
 

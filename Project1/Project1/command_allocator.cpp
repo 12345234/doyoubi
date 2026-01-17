@@ -34,7 +34,7 @@ void command_allocator::reset() noexcept {
         assert(false && "コマンドアロケータが未作成です");
         return nullptr;
     }
-    return commandAllocator_;
+    return commandAllocator_.Get();
 }
 [[nodiscard]] D3D12_COMMAND_LIST_TYPE command_allocator::getType() const noexcept {
     if (!commandAllocator_) {
