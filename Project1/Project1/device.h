@@ -20,8 +20,16 @@ public:
 
 	[[nodiscard]] ID3D12Device* get() const noexcept;
 
+	[[nodiscard]] const DXGI& dxgi()const noexcept;
+
+	device(const device& i) = delete;
+	device& operator=(const device& r) = delete;
+	device(device&& r) = delete;
+	device& operator=(device&& r) = delete;
+
+
 private:
-	DXGI   dxgiInstance;
+	DXGI                                 dxgiInstance;
 	Microsoft::WRL::ComPtr<ID3D12Device> device_;
 };
 

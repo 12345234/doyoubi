@@ -6,7 +6,11 @@
 
 
 [[nodiscard]] bool device::create() noexcept {
-
+    if (!dxgiInstance.setdisplayAdapter())
+    {
+        assert(false && " aa");
+        return false;
+    }
 
 
     const auto hr = D3D12CreateDevice(dxgiInstance.displayAdapter(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&device_));
@@ -24,3 +28,6 @@
 
     return device_.Get();
 }
+//[[nodiscard]] const DXGI& decice::digi() const noexcept{
+//    return dxgiInstance;
+//}

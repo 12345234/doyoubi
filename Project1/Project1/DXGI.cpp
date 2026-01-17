@@ -5,18 +5,20 @@
 
 
 [[nodiscard]] bool DXGI::setdisplayAdapter() noexcept {
-#if _DEBUG
-    ID3D12Debug* debug;
-    if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug)))) {
-        debug->EnableDebugLayer();
+    if (_DEBUG)
+    {
+        ID3D12Debug* debug;
+        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debug)))) {
+            debug->EnableDebugLayer();
+        }
     }
-#endif
 
     {
         UINT createFactoryFlags = 0;
-#if _DEBUG
-        createFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-#endif
+        if (_DEBUG)
+        {
+            createFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+        }
         const auto hr = CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&dxgiFactory));
         if (FAILED(hr)) {
             assert(false && "DXGIファクトリーの作成に失敗");
