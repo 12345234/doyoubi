@@ -9,21 +9,22 @@ swapchain::~swapchain() {
     }
 }
 
-[[nodiscard]] bool swapchain::create(const DXGI& dxgi, const window& window, const commandque& commandQueue) noexcept {
-    const auto [w, h] = window.size();
+[[nodiscard]] bool swapchain::create(const commandque& commandQueue) noexcept {
+    const auto [w, h] = window::instance().size();
 
-    swapChainDesc = {};
+    swapChainDesc             = {};
     swapChainDesc.BufferCount = 2;                               
-    swapChainDesc.Width = w;                               
-    swapChainDesc.Height = h;                                
-    swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     
+    swapChainDesc.Width       = w;                               
+    swapChainDesc.Height      = h;                                
+    swapChainDesc.Format      = DXGI_FORMAT_R8G8B8A8_UNORM;     
     swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  
-    swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;    
+    swapChainDesc.SwapEffect  = DXGI_SWAP_EFFECT_FLIP_DISCARD;    
     swapChainDesc.SampleDesc.Count = 1;                                
-    IDXGISwapChain1* tempSwapChain{};
+    Microsoft::WRL::ComPtr<IDXGISwapChain1>  tempSwapChain{};
     {
-        const auto hr = dxgi.factory()->CreateSwapChainForHwnd(commandQueue.get(), window.handle(),
-            &swapChainDesc, nullptr, nullptr, &tempSwapChain);
+        const auto hr = device::instance().dxgi().factory()->CreateSwapChainForHwnd(
+            commandQueue.get(), window::instance().handle(),
+            &swapChainDesc, nullptr, nullptr, tempSwapChain.GetAddressOf());
         if (FAILED(hr)) {
             assert(false && "スワップチェインの作成に失敗");
             return false;
@@ -48,7 +49,7 @@ swapchain::~swapchain() {
         assert(false && "スワップチェインが未作成です");
         return nullptr;
     }
-    return swapChain;
+    return swapChain.Get();
 }
 
 [[nodiscard]] const DXGI_SWAP_CHAIN_DESC1& swapchain::getDesc() const noexcept {

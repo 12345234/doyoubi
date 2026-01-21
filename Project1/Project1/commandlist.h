@@ -9,13 +9,13 @@ public:
 
 	~commandlist();
 
-	[[nodiscard]] bool create(const device& device, const command_allocator& commandAllocator) noexcept;
+	[[nodiscard]] bool create(const command_allocator& commandAllocator) noexcept;
 
 	void reset(const command_allocator& commandAllocator) noexcept;
 
 	[[nodiscard]] ID3D12GraphicsCommandList* get() const noexcept;
 
 private:
-	ID3D12GraphicsCommandList* commandList{};
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList{};
 };
 

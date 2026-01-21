@@ -1,6 +1,7 @@
 #pragma once
 #include "device.h"
 #include <wrl/client.h>
+using namespace std;
 class shader final {
 public:
 

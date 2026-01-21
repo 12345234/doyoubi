@@ -23,6 +23,7 @@ namespace {
     handle_ = CreateWindow(wc.lpszClassName, wc.lpszClassName,
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width, height,
         nullptr, nullptr, instance, nullptr);
+
     if (!handle_) {
         return E_FAIL;
     }
@@ -45,6 +46,12 @@ namespace {
         }
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+
+        //static byte keyState[256]{};
+        //if (GetKeyboardState(keyState)) {
+        //    // キー情報取得に成功したら、Input クラスに情報を渡す
+        //    Input::instance().updateKeyState(keyState);
+        //}
     }
 
     return true;

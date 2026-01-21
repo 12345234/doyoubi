@@ -2,13 +2,12 @@
 #include "shader.h"
 #include <cassert>
 #include <string>
-
 #include <D3Dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 
 [[nodiscard]] bool shader::create() noexcept {
-    const std::string  filePath = "../Project1/Shader.hlsl";
-    const std::wstring temp = std::wstring(filePath.begin(), filePath.end());
+    string  filePath = "../Project1/Shader.hlsl";
+    wstring temp = wstring(filePath.begin(), filePath.end());
 
     ID3DBlob* error{};
 

@@ -11,9 +11,18 @@
 #include "root.h"
 #include "shader.h"
 #include "pipline.h"
-#include "trianglepolygon.h"
+#include "constantbuffer.h"
+#include "depthbuffer.h"
+
+#include"trianglepolygon.h"
+
+#include <memory>
+#include <vector>
 #include <cassert>
 
+namespace {
+    constexpr UINT sceneShaderSlot_ = 0;  
+}
 class main final {
 public:
     main() = default;
@@ -22,66 +31,69 @@ public:
 
     [[nodiscard]] bool initialize(HINSTANCE instance) noexcept {
         // ウィンドウの生成
-        if (S_OK != windowInstance_.create(instance, 1280, 720, "MyApp")) {
+        if (S_OK != window::instance().create(instance, 1280, 720, "MyApp")) {
             assert(false && "ウィンドウの生成に失敗しました");
             return false;
         }
-        // DXGI の生成
-        if (!dxgiInstance_.setdisplayAdapter()) {
-            assert(false && "DXGIのアダプタ設定に失敗しました");
-            return false;
-        }
         // デバイスの生成
-        if (!deviceInstance_.create()) {
+        if (!device::instance().create()) {
             assert(false && "デバイスの作成に失敗しました");
             return false;
         }
         // コマンドキューの生成
-        if (!commandQueueInstance_.create(deviceInstance_)) {
+        if (!commandQueueInstance_.create()) {
             assert(false && "コマンドキューの作成に失敗しました");
             return false;
         }
         // スワップチェインの生成
-        if (!swapChainInstance_.create(dxgiInstance_, windowInstance_, commandQueueInstance_)) {
+        if (!swapChainInstance_.create(commandQueueInstance_)) {
             assert(false && "スワップチェインの作成に失敗しました");
             return false;
         }
         // ディスクリプタヒープの生成
-        if (!descriptorHeapInstance_.create(deviceInstance_, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, swapChainInstance_.getDesc().BufferCount)) {
+        if (!DescriptorHeapa::instance().create(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, swapChainInstance_.getDesc().BufferCount)) {
             assert(false && "ディスクリプタヒープの作成に失敗しました");
             return false;
         }
+        if (!DescriptorHeapa::instance().create(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 5, true)) {
+            assert(false && "定数バッファ用ディスクリプタヒープの作成に失敗しました");
+            return false;
+        }
+        if (!DescriptorHeapa::instance().create(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1)) {
+            assert(false && "デプスバッファ用ディスクリプタヒープの作成に失敗しました");
+            return false;
+        }
         // レンダーターゲットの生成
-        if (!renderTargetInstance_.createBackBuffer(deviceInstance_, swapChainInstance_, descriptorHeapInstance_)) {
+        if (!renderTargetInstance_.createBackBuffer(swapChainInstance_)) {
             assert(false && "レンダーターゲットの作成に失敗しました");
             return false;
         }
+        if (!depthBufferInstance_.create()) {
+            assert(false && "デプスバッファの作成に失敗しました");
+            return false;
+        }
         // コマンドアロケータの生成
-        if (!commandAllocatorInstance_[0].create(deviceInstance_, D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+        if (!commandAllocatorInstance_[0].create( D3D12_COMMAND_LIST_TYPE_DIRECT)) {
             assert(false && "コマンドアロケータの作成に失敗しました");
             return false;
         }
-        if (!commandAllocatorInstance_[1].create(deviceInstance_, D3D12_COMMAND_LIST_TYPE_DIRECT)) {
+        if (!commandAllocatorInstance_[1].create(D3D12_COMMAND_LIST_TYPE_DIRECT)) {
             assert(false && "コマンドアロケータの作成に失敗しました");
             return false;
         }
         // コマンドリストの生成
-        if (!commandListInstance_.create(deviceInstance_, commandAllocatorInstance_[0])) {
+        if (!commandListInstance_.create(commandAllocatorInstance_[0])) {
             assert(false && "コマンドリストの作成に失敗しました");
             return false;
         }
         // フェンスの生成
-        if (!fenceInstance_.create(deviceInstance_)) {
+        if (!fenceInstance_.create()) {
             assert(false && "フェンスの作成に失敗しました");
             return false;
         }
-        // 三角形ポリゴンの生成
-        if (!trianglePolygonInstance_.create(deviceInstance_)) {
-            assert(false && "三角形ポリゴンの作成に失敗しました");
-            return false;
-        }
+        
         // ルートシグネチャの生成
-        if (!rootSignatureInstance_.create(deviceInstance_)) {
+        if (!rootSignatureInstance_.create()) {
             assert(false && "ルートシグネチャの作成に失敗しました");
             return false;
         }
@@ -96,11 +108,17 @@ public:
             return false;
         }
 
+        // 三角形ポリゴンの生成
+        if (!trianglePolygonInstance_.create(deviceInstance)) {
+            assert(false && "三角形ポリゴンの作成に失敗しました");
+            return false;
+        }
+
         return true;
     }
 
     void loop() noexcept {
-        while (windowInstance_.messageLoop()) {
+        while (window::instance().messageLoop()) {
             // 現在のバックバッファインデックスを取得
             const auto backBufferIndex = swapChainInstance_.get()->GetCurrentBackBufferIndex();
             // 以前のフレームの GPU の処理が完了しているか確認して待機する
@@ -117,7 +135,7 @@ public:
             commandListInstance_.get()->ResourceBarrier(1, &pToRT);
 
             // レンダーターゲットの設定
-            D3D12_CPU_DESCRIPTOR_HANDLE handles[] = { renderTargetInstance_.getDescriptorHandle(deviceInstance_, descriptorHeapInstance_, backBufferIndex) };
+            D3D12_CPU_DESCRIPTOR_HANDLE handles[] = { renderTargetInstance_.getDescriptorHandle(backBufferIndex) };
             commandListInstance_.get()->OMSetRenderTargets(1, handles, false, nullptr);
 
             // レンダーターゲットのクリア
@@ -129,7 +147,7 @@ public:
             // ルートシグネチャの設定
             commandListInstance_.get()->SetGraphicsRootSignature(rootSignatureInstance_.get());
             // ビューポートの設定
-            const auto [w, h] = windowInstance_.size();
+            const auto [w, h] = window::instance().size();
             D3D12_VIEWPORT viewport{};
             viewport.TopLeftX = 0.0f;
             viewport.TopLeftY = 0.0f;
@@ -150,14 +168,14 @@ public:
            // リソースバリアでレンダーターゲットを RenderTarget から Present へ変更
             auto rtToP = resourceBarrier(renderTargetInstance_.get(backBufferIndex), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
             commandListInstance_.get()->ResourceBarrier(1, &rtToP);
-            // コマンドリストをクローズ
+            // コマンドリストクローズ
             commandListInstance_.get()->Close();
             // コマンドキューにコマンドリストを送信
             ID3D12CommandList* ppCommandLists[] = { commandListInstance_.get() };
             commandQueueInstance_.get()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
             // プレゼント
             swapChainInstance_.get()->Present(1, 0);
-            // フェンスにフェンス値を設定
+            // フェンス値を設定
             commandQueueInstance_.get()->Signal(fenceInstance_.get(), nextFenceValue_);
             frameFenceValue_[backBufferIndex] = nextFenceValue_;
             nextFenceValue_++;
@@ -177,24 +195,23 @@ public:
     }
 
 private:
-    window            windowInstance_{};              
-    DXGI              dxgiInstance_{};                 
-    device            deviceInstance_{};               
-    commandque        commandQueueInstance_{};         
-    swapchain         swapChainInstance_{};            
-    DescriptorHeap    descriptorHeapInstance_{};       
-    renderTargets     renderTargetInstance_{};        
-    command_allocator commandAllocatorInstance_[2]{}; 
-    commandlist       commandListInstance_{};          
+    device        deviceInstance{};
+    commandque     commandQueueInstance_{};
+    swapchain        swapChainInstance_{};            
+    renderTargets     renderTargetInstance_{};
+    depthbuffer      depthBufferInstance_{};
+    command_allocator commandAllocatorInstance_[2]{};
+    commandlist      commandListInstance_{};          
 
     fence  fenceInstance_{};       
     UINT64 frameFenceValue_[2]{};  
-    UINT64 nextFenceValue_ = 1;   
+    UINT64 nextFenceValue_ = 1;    
 
+    root     rootSignatureInstance_{};       
+    shader             shaderInstance_{};              
+    pipline piplineStateObjectInstance_{};  
 
-    root               rootSignatureInstance_{};       
-    shader             shaderInstance_{};             
-    pipline            piplineStateObjectInstance_{};  
+    //unique_ptr<game::Camera> camera_{};  
     trianglepolygon    trianglePolygonInstance_{};     
 };
 

@@ -5,9 +5,9 @@ class command_allocator
 public:
 	command_allocator() = default;
 
-	~command_allocator();
+	~command_allocator() = default;
 
-	[[nodiscard]]bool create(const device& device, const D3D12_COMMAND_LIST_TYPE type) noexcept;
+	[[nodiscard]]bool create(const D3D12_COMMAND_LIST_TYPE type) noexcept;
 
 	void reset() noexcept;
 

@@ -6,22 +6,22 @@
 class device
 {
 public:
+	device() = default;
+
+	~device() = default;
 	static device& instance()
 	{
 		static device instance;
 		return instance;
 	}
 
-	device() = default;
-
-	~device() = default;
-
 	[[nodiscard]] bool create() noexcept;
 
 	[[nodiscard]] ID3D12Device* get() const noexcept;
 
 	[[nodiscard]] const DXGI& dxgi()const noexcept;
-
+private:
+	
 	device(const device& i) = delete;
 	device& operator=(const device& r) = delete;
 	device(device&& r) = delete;

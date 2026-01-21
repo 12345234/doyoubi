@@ -7,12 +7,12 @@ public:
     root() = default;
 
 
-    ~root();
+    ~root() = default;
 
-    [[nodiscard]] bool create(const device& device) noexcept;
+    [[nodiscard]] bool create() noexcept;
 
     [[nodiscard]] ID3D12RootSignature* get() const noexcept;
 
 private:
-    ID3D12RootSignature* rootSignature_{};  /// ルートシグネチャ
+    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 };

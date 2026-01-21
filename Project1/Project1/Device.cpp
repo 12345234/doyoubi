@@ -28,6 +28,6 @@
 
     return device_.Get();
 }
-//[[nodiscard]] const DXGI& decice::digi() const noexcept{
-//    return dxgiInstance;
-//}
+[[nodiscard]] const DXGI& device::dxgi() const noexcept{
+    return dxgiInstance;
+}

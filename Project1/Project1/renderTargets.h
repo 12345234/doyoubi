@@ -7,17 +7,17 @@
 class renderTargets final
 {
 public:
-	renderTargets() = default;//コンストラクタ
+	renderTargets() = default;
 
-	~renderTargets();//デストラクタ
+	~renderTargets();
 
-	[[nodiscard]] bool createBackBuffer(const device& device, const swapchain& swaphain, const DescriptorHeap& heap)noexcept;
+	[[nodiscard]] bool createBackBuffer(const swapchain& swaphain)noexcept;
 
-	[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE getDescriptorHandle(const device& device, const DescriptorHeap& heap, UINT index) const noexcept;
+	[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE getDescriptorHandle(UINT index) const noexcept;
 
 	[[nodiscard]] ID3D12Resource* get(uint32_t index) const noexcept;
 
 private:
-	std::vector<ID3D12Resource*> renderTargets_;
+	vector<Microsoft::WRL::ComPtr<ID3D12Resource>> renderTargets_;
 };
 
