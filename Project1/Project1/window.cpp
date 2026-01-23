@@ -1,4 +1,5 @@
 ﻿#include "window.h"
+#include"input.h"
 namespace {
     LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         switch (msg) {
@@ -47,11 +48,10 @@ namespace {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
 
-        //static byte keyState[256]{};
-        //if (GetKeyboardState(keyState)) {
-        //    // キー情報取得に成功したら、Input クラスに情報を渡す
-        //    Input::instance().updateKeyState(keyState);
-        //}
+        static byte keyState[256]{};
+        if (GetKeyboardState(keyState)) {
+            input::instance().updateKeystate(keyState);
+        }
     }
 
     return true;

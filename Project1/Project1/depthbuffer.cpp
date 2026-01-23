@@ -1,18 +1,14 @@
 #include "depthbuffer.h"
-#include "descriptorheap.h"
-#include "window.h"
 #include <cassert>
 
-namespace {
-    constexpr auto heapType_ = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-}
-
 depthbuffer::~depthbuffer() {
+    if (depthBuffer) {
+        depthBuffer->Release();
+        depthBuffer = nullptr;
+    }
 }
-
-[[nodiscard]] bool depthbuffer::create() noexcept {
-    
-    const auto [w, h] = window::instance().size();// ウィンドウサイズを取得
+[[nodiscard]] bool depthbuffer::create(const device& device, const DescriptorHeap& heap, const window& window) noexcept {
+    const auto [w, h] = window.size();
 
     D3D12_HEAP_PROPERTIES heapProps{};
     heapProps.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -33,7 +29,7 @@ depthbuffer::~depthbuffer() {
     clearValue.DepthStencil.Depth = 1.0f;
     clearValue.DepthStencil.Stencil = 0;
 
-    const auto res = device::instance().get()->CreateCommittedResource(
+    const auto res = device.get()->CreateCommittedResource(
         &heapProps,
         D3D12_HEAP_FLAG_NONE,
         &depthDesc,
@@ -46,22 +42,25 @@ depthbuffer::~depthbuffer() {
         return false;
     }
 
-    auto heap = DescriptorHeapa::instance().get(heapType_);
-
+    auto heapType = heap.gettype();
+    if (heapType != D3D12_DESCRIPTOR_HEAP_TYPE_DSV) {
+        assert(false && "ディスクリプタヒープのタイプが DSV ではありません");
+        false;
+    }
     D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc{};
     dsvDesc.Format = depthDesc.Format;
     dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-    handle = heap->GetCPUDescriptorHandleForHeapStart();
-    device::instance().get()->CreateDepthStencilView(depthBuffer.Get(), &dsvDesc, handle);
+    handle = heap.get()->GetCPUDescriptorHandleForHeapStart();
+    device.get()->CreateDepthStencilView(depthBuffer, &dsvDesc, handle);
 
     return true;
 }
 
 [[nodiscard]] ID3D12Resource* depthbuffer::depthBufferr() const noexcept {
     assert(depthBuffer && "デプスバッファが未生成です");
-    return depthBuffer.Get();
+    return depthBuffer;
 }
 
 [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE depthbuffer::getCpuDescriptorHandle() const noexcept {

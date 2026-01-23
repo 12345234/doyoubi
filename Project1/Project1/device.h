@@ -1,35 +1,20 @@
 #pragma once
 
-#include"DXGI.h"
-#include<d3d12.h>
-#include<wrl/client.h>
-class device
-{
+#include "DXGI.h"
+#include <d3d12.h>
+#include <d3d12.h>
+
+class device final {
 public:
-	device() = default;
+    device() = default;
 
-	~device() = default;
-	static device& instance()
-	{
-		static device instance;
-		return instance;
-	}
+    ~device();
 
-	[[nodiscard]] bool create() noexcept;
+    [[nodiscard]] bool create(const DXGI& dxgi) noexcept;
 
-	[[nodiscard]] ID3D12Device* get() const noexcept;
-
-	[[nodiscard]] const DXGI& dxgi()const noexcept;
-private:
-	
-	device(const device& i) = delete;
-	device& operator=(const device& r) = delete;
-	device(device&& r) = delete;
-	device& operator=(device&& r) = delete;
+    [[nodiscard]] ID3D12Device* get() const noexcept;
 
 
 private:
-	DXGI                                 dxgiInstance;
-	Microsoft::WRL::ComPtr<ID3D12Device> device_;
+    ID3D12Device* device_;
 };
-

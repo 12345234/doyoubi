@@ -1,18 +1,17 @@
 #pragma once
 
 #include "device.h"
+
 class root final {
 public:
-
     root() = default;
 
+    ~root();
 
-    ~root() = default;
-
-    [[nodiscard]] bool create() noexcept;
+    [[nodiscard]] bool create(const device& device) noexcept;
 
     [[nodiscard]] ID3D12RootSignature* get() const noexcept;
 
 private:
-    Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
+    ID3D12RootSignature* rootsigu{};
 };

@@ -1,75 +1,71 @@
 #include "constantbuffer.h"
 #include <cassert>
 
-namespace {
-	constexpr auto type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+constantbuffer::~constantbuffer() {
+    if (constantBuffer1) {
+        constantBuffer1->Release();
+        constantBuffer1 = nullptr;
+    }
 }
-constantbuffer::~constantbuffer()
+
+bool constantbuffer::create(const device& device, const DescriptorHeap& heap, UINT bufferSize, UINT descriptorIndex) 
 {
-	DescriptorHeapa::instance().releaseDescriptor(type, descriptorIndex);
+    const auto size = (sizeof(bufferSize) + 255) & ~255;
+
+    D3D12_HEAP_PROPERTIES heapProps{};
+    heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+    D3D12_RESOURCE_DESC resourceDesc{};
+    resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    resourceDesc.Width = size;
+    resourceDesc.Height = 1;
+    resourceDesc.DepthOrArraySize = 1;
+    resourceDesc.MipLevels = 1;
+    resourceDesc.Format = DXGI_FORMAT_UNKNOWN;
+    resourceDesc.SampleDesc.Count = 1;
+    resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+    const auto res = device.get()->CreateCommittedResource(
+        &heapProps,
+        D3D12_HEAP_FLAG_NONE,
+        &resourceDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ,
+        nullptr,
+        IID_PPV_ARGS(&constantBuffer1));
+    if (FAILED(res)) {
+        assert(false && "コンスタントバッファの作成に失敗しました");
+        return false;
+    }
+
+    auto heapType = heap.gettype();
+    if (heapType != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) {
+        assert(false && "ディスクリプタヒープのタイプが CBV_SRV_UAV ではありません");
+        false;
+    }
+
+    D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
+    cbvDesc.BufferLocation = constantBuffer1->GetGPUVirtualAddress();
+    cbvDesc.SizeInBytes = size;
+
+    UINT cbvDescriptorSize = device.get()->GetDescriptorHandleIncrementSize(heap.gettype());
+
+    D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = heap.get()->GetCPUDescriptorHandleForHeapStart();
+    cpuHandle.ptr += descriptorIndex * cbvDescriptorSize;
+
+    device.get()->CreateConstantBufferView(&cbvDesc, cpuHandle);
+
+    gpuHandle = heap.get()->GetGPUDescriptorHandleForHeapStart();
+
+    gpuHandle.ptr += descriptorIndex * cbvDescriptorSize;
+
+    return true;
 }
 
-bool constantbuffer::create(UINT buffersize)
-{
-	const auto size = (sizeof(buffersize)+255)& ~255;
-
-	D3D12_HEAP_PROPERTIES heapProps;
-	heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
-	D3D12_RESOURCE_DESC resourcedesc;
-	resourcedesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	resourcedesc.Width = size;
-	resourcedesc.Height = 1;
-	resourcedesc.DepthOrArraySize = 1;
-	resourcedesc.MipLevels = 1;
-	resourcedesc.Format = DXGI_FORMAT_UNKNOWN;
-	resourcedesc.SampleDesc.Count = 1;
-	resourcedesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	const auto res = device::instance().get()->CreateCommittedResource(
-		&heapProps,
-		D3D12_HEAP_FLAG_NONE,
-		&resourcedesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&constantBuffer1));
-	if (FAILED(res)) {
-		assert(false && "コンスタントバッファの作成に失敗しました");
-		return false;
-	}
-
-	const auto descriptorIndexa = DescriptorHeapa::instance().allocateDescriptor(type);
-	if (!descriptorIndexa.has_value()) {
-		assert(false && "コンスタントバッファのディスクリプタ確保に失敗しました");
-		return false;
-	}
-
-	descriptorIndex = descriptorIndexa.value();
-
-	auto heap = DescriptorHeapa::instance().get(type);
-
-	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc{};
-	cbvDesc.BufferLocation = constantBuffer1->GetGPUVirtualAddress();
-	cbvDesc.SizeInBytes = size;
-
-	UINT cbvDescriptorSize = device::instance().get()->GetDescriptorHandleIncrementSize(type);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = heap->GetCPUDescriptorHandleForHeapStart();
-
-	cpuHandle.ptr += descriptorIndex * cbvDescriptorSize;
-
-	device::instance().get()->CreateConstantBufferView(&cbvDesc, cpuHandle);
-
-	gpuHandle = heap->GetGPUDescriptorHandleForHeapStart();
-	
-	gpuHandle.ptr += descriptorIndex * cbvDescriptorSize;
-
-	return true;
+[[nodiscard]] ID3D12Resource* constantbuffer::constantbuffer1() const noexcept {
+    assert(constantBuffer1 && "コンスタントバッファが未作成です");
+    return constantBuffer1;
 }
-ID3D12Resource* constantbuffer::constantbuffer1() const noexcept {
-	assert(constantBuffer1 && "コンスタントバッファが未作成です");
-	return constantBuffer1.Get();
-}
+
 [[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE constantbuffer::getGpuDescriptorHandle() const noexcept {
-	assert(constantBuffer1 && "コンスタントバッファが未作成です");
-	return gpuHandle;
+    assert(constantBuffer1 && "コンスタントバッファが未作成です");
+    return gpuHandle;
 }

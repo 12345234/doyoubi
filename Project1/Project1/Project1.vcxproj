@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="commandlist.cpp" />
     <ClCompile Include="commandque.cpp" />
     <ClCompile Include="command_allocator.cpp" />
@@ -137,8 +138,11 @@
     <ClCompile Include="device.cpp" />
     <ClCompile Include="DXGI.cpp" />
     <ClCompile Include="fence.cpp" />
+    <ClCompile Include="input.cpp" />
+    <ClCompile Include="object.cpp" />
     <ClCompile Include="pipline.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="quadpolygon.cpp" />
     <ClCompile Include="root.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="trianglepolygon.cpp" />
@@ -148,6 +152,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="commandlist.h" />
     <ClInclude Include="commandque.h" />
     <ClInclude Include="command_allocator.h" />
@@ -157,8 +162,11 @@
     <ClInclude Include="device.h" />
     <ClInclude Include="DXGI.h" />
     <ClInclude Include="fence.h" />
+    <ClInclude Include="input.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="pipline.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="quadpolygon.h" />
     <ClInclude Include="renderTargets.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="root.h" />

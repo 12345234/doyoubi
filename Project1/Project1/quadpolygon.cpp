@@ -1,25 +1,26 @@
-ï»¿#include "trianglepolygon.h"
+#include "quadpolygon.h"
 #include <cassert>
 
 namespace {
     struct Vertex {
-        DirectX::XMFLOAT3 position;  
-        DirectX::XMFLOAT4 color;    
+        DirectX::XMFLOAT3 position; 
+        DirectX::XMFLOAT4 color;  
     };
+} 
+
+quadpolygon::~quadpolygon() {
+    if (vertexBuffer) {
+        vertexBuffer->Release();
+        vertexBuffer = nullptr;
+    }
+
+    if (indexBuffer) {
+        indexBuffer->Release();
+        indexBuffer = nullptr;
+    }
 }
 
-TrianglePolygon::~TrianglePolygon() {
-    if (vertexBuffer_) {
-        vertexBuffer_->Release();
-        vertexBuffer_ = nullptr;
-    }
-    if (indexBuffer_) {
-        indexBuffer_->Release();
-        indexBuffer_ = nullptr;
-    }
-}
-
-[[nodiscard]] bool TrianglePolygon::create(const device& device) noexcept {
+[[nodiscard]] bool quadpolygon::create(const device& device) noexcept {
     if (!createVertexBuffer(device)) {
         return false;
     }
@@ -29,14 +30,17 @@ TrianglePolygon::~TrianglePolygon() {
 
     return true;
 }
-[[nodiscard]] bool TrianglePolygon::createVertexBuffer(const device& device) noexcept {
-    Vertex triangleVertices[] = {
-        {  {0.0f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-        { {0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
+
+[[nodiscard]] bool quadpolygon::createVertexBuffer(const device& device) noexcept {
+    Vertex vertices[] = {
+        { {-0.5f, 0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
+        {  {0.5f, 0.5f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, 
+        {{-0.5f, -0.5f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, 
+        { {0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
     };
 
-    const auto vertexBufferSize = sizeof(triangleVertices);
+    const auto vertexBufferSize = sizeof(vertices);
+
     D3D12_HEAP_PROPERTIES heapProperty{};
     heapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -44,7 +48,6 @@ TrianglePolygon::~TrianglePolygon() {
     heapProperty.CreationNodeMask = 1;
     heapProperty.VisibleNodeMask = 1;
 
-    // ã©ã‚“ãªãƒªã‚½ãƒ¼ã‚¹ã‚’ä½œæˆã™ã‚‹ã‹ã®è¨­å®š
     D3D12_RESOURCE_DESC resourceDesc{};
     resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
     resourceDesc.Alignment = 0;
@@ -58,41 +61,43 @@ TrianglePolygon::~TrianglePolygon() {
     resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
     resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-    // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ
     auto res = device.get()->CreateCommittedResource(
         &heapProperty,
         D3D12_HEAP_FLAG_NONE,
         &resourceDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_PPV_ARGS(&vertexBuffer_));
+        IID_PPV_ARGS(&vertexBuffer));
     if (FAILED(res)) {
-        assert(false && "é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆã«å¤±æ•—");
+        assert(false && "’¸“_ƒoƒbƒtƒ@‚Ìì¬‚ÉŽ¸”s");
         return false;
     }
+
     Vertex* data{};
-    res = vertexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&data));
+
+    res = vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&data));
     if (FAILED(res)) {
-        assert(false && "é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ãƒžãƒƒãƒ—ã«å¤±æ•—");
+        assert(false && "’¸“_ƒoƒbƒtƒ@‚Ìƒ}ƒbƒv‚ÉŽ¸”s");
         return false;
     }
 
-    memcpy_s(data, vertexBufferSize, triangleVertices, vertexBufferSize);
-    vertexBuffer_->Unmap(0, nullptr);
+    memcpy_s(data, vertexBufferSize, vertices, vertexBufferSize);
+    vertexBuffer->Unmap(0, nullptr);
 
-    vertexBufferView_.BufferLocation = vertexBuffer_->GetGPUVirtualAddress();  
-    vertexBufferView_.SizeInBytes = vertexBufferSize;                      
-    vertexBufferView_.StrideInBytes = sizeof(Vertex);                        
+    vertexBufferView_.BufferLocation = vertexBuffer->GetGPUVirtualAddress();  
+    vertexBufferView_.SizeInBytes = vertexBufferSize;      
+    vertexBufferView_.StrideInBytes = sizeof(Vertex);                       
 
     return true;
 }
 
-[[nodiscard]] bool TrianglePolygon::createIndexBuffer(const device& device) noexcept {
-    uint16_t triangleIndices[] = {
-        0, 1, 2  
+[[nodiscard]] bool quadpolygon::createIndexBuffer(const device& device) noexcept {
+    uint16_t indices[] = {
+        0, 1, 2, 3 
     };
 
-    const auto indexBufferSize = sizeof(triangleIndices);
+    const auto indexBufferSize = sizeof(indices);
+
     D3D12_HEAP_PROPERTIES heapProperty{};
     heapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
     heapProperty.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -119,31 +124,36 @@ TrianglePolygon::~TrianglePolygon() {
         &resourceDesc,
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_PPV_ARGS(&indexBuffer_));
+        IID_PPV_ARGS(&indexBuffer));
     if (FAILED(res)) {
-        assert(false && "ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆã«å¤±æ•—");
+        assert(false && "ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìì¬‚ÉŽ¸”s");
         return false;
     }
+
     uint16_t* data{};
-    res = indexBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&data));
+    res = indexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&data));
     if (FAILED(res)) {
-        assert(false && "ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ãƒžãƒƒãƒ—ã«å¤±æ•—");
+        assert(false && "ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìƒ}ƒbƒv‚ÉŽ¸”s");
         return false;
     }
 
-    memcpy_s(data, indexBufferSize, triangleIndices, indexBufferSize);
-    indexBuffer_->Unmap(0, nullptr);
+    memcpy_s(data, indexBufferSize, indices, indexBufferSize);
+  
+    indexBuffer->Unmap(0, nullptr);
 
-    indexBufferView_.BufferLocation = indexBuffer_->GetGPUVirtualAddress();
+    indexBufferView_.BufferLocation = indexBuffer->GetGPUVirtualAddress();
     indexBufferView_.SizeInBytes = indexBufferSize;
-    indexBufferView_.Format = DXGI_FORMAT_R16_UINT;
+    indexBufferView_.Format = DXGI_FORMAT_R16_UINT;  
 
     return true;
 }
 
-void TrianglePolygon::draw(const commandlist& commandList) noexcept {
+void quadpolygon::draw(const commandlist& commandList) noexcept {
     commandList.get()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+
     commandList.get()->IASetIndexBuffer(&indexBufferView_);
-    commandList.get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    commandList.get()->DrawIndexedInstanced(3, 1, 0, 0, 0);
+
+    commandList.get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP); 
+
+    commandList.get()->DrawIndexedInstanced(4, 1, 0, 0, 0);
 }

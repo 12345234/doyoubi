@@ -1,13 +1,13 @@
 #pragma once
 #include "device.h"
-class command_allocator
+class commandallocator
 {
 public:
-	command_allocator() = default;
+	commandallocator() = default;
 
-	~command_allocator() = default;
+	~commandallocator();
 
-	[[nodiscard]]bool create(const D3D12_COMMAND_LIST_TYPE type) noexcept;
+	[[nodiscard]]bool create(const device& device, const D3D12_COMMAND_LIST_TYPE type) noexcept;
 
 	void reset() noexcept;
 
@@ -16,7 +16,7 @@ public:
 	[[nodiscard]] D3D12_COMMAND_LIST_TYPE getType() const noexcept;
 
 private:
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator_{};
+	ID3D12CommandAllocator* commandAllocator{};
 	D3D12_COMMAND_LIST_TYPE type_{};
 };
 

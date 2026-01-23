@@ -7,13 +7,12 @@ public:
 	constantbuffer() = default;
 	~constantbuffer();
 
-	[[nodiscard]] bool create(UINT buffersize)noexcept;
+	bool create(const device& device,const DescriptorHeap& heap, UINT buffersize, UINT descriptorIndex);
 	[[nodiscard]] ID3D12Resource* constantbuffer1() const noexcept;
 
 	[[nodiscard]] D3D12_GPU_DESCRIPTOR_HANDLE getGpuDescriptorHandle() const noexcept;
 private:
-	Microsoft::WRL::ComPtr<ID3D12Resource> constantBuffer1{};
-	UINT                                   descriptorIndex{};
-	D3D12_GPU_DESCRIPTOR_HANDLE            gpuHandle{};
+	ID3D12Resource*                      constantBuffer1{};
+	D3D12_GPU_DESCRIPTOR_HANDLE          gpuHandle{};
 };
 

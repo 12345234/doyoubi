@@ -2,11 +2,17 @@
 #include "command_allocator.h"
 #include <cassert>
 
-[[nodiscard]] bool command_allocator::create(const D3D12_COMMAND_LIST_TYPE type) noexcept {
+commandallocator::~commandallocator() {
+    if (commandAllocator) {
+        commandAllocator->Release();
+        commandAllocator = nullptr;
+    }
+}
+[[nodiscard]] bool commandallocator::create(const device& device, const D3D12_COMMAND_LIST_TYPE type) noexcept {
 
     type_ = type;
 
-    const auto hr = device::instance().get()->CreateCommandAllocator(type_, IID_PPV_ARGS(&commandAllocator_));
+    const auto hr = device.get()->CreateCommandAllocator(type, IID_PPV_ARGS(&commandAllocator));
     if (FAILED(hr)) {
         assert(false && "コマンドアロケータの作成に失敗しました");
         return false;
@@ -15,23 +21,23 @@
     return true;
 }
 
-void command_allocator::reset() noexcept {
+void commandallocator::reset() noexcept {
 
-    if (!commandAllocator_) {
+    if (!commandAllocator) {
         assert(false && "コマンドアロケータが未作成です");
     }
 
-    commandAllocator_->Reset();
+    commandAllocator->Reset();
 }
-[[nodiscard]] ID3D12CommandAllocator* command_allocator::get() const noexcept {
-    if (!commandAllocator_) {
+[[nodiscard]] ID3D12CommandAllocator* commandallocator::get() const noexcept {
+    if (!commandAllocator) {
         assert(false && "コマンドアロケータが未作成です");
         return nullptr;
     }
-    return commandAllocator_.Get();
+    return commandAllocator;
 }
-[[nodiscard]] D3D12_COMMAND_LIST_TYPE command_allocator::getType() const noexcept {
-    if (!commandAllocator_) {
+[[nodiscard]] D3D12_COMMAND_LIST_TYPE commandallocator::getType() const noexcept {
+    if (!commandAllocator) {
         assert(false && "コマンドリストのタイプが未設定です");
     }
     return type_;

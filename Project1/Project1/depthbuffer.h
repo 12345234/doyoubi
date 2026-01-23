@@ -1,5 +1,7 @@
 #pragma once
 #include "device.h"
+#include"DescriptorHeap.h"
+#include"window.h"
 class depthbuffer
 {
 public:
@@ -7,17 +9,17 @@ public:
     depthbuffer() = default;
 
 
-    ~depthbuffer() = default;
+    ~depthbuffer();
 
 
-    [[nodiscard]] bool create() noexcept;
+    [[nodiscard]] bool create(const device& device, const DescriptorHeap& heap, const window& window) noexcept;
 
     [[nodiscard]] ID3D12Resource* depthBufferr() const noexcept;
 
     [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE getCpuDescriptorHandle() const noexcept;
 
 private:
-    Microsoft::WRL::ComPtr<ID3D12Resource> depthBuffer;  
+    ID3D12Resource* depthBuffer;  
     D3D12_CPU_DESCRIPTOR_HANDLE            handle;     
 };
 

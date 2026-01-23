@@ -1,6 +1,12 @@
 #pragma once
-class Player
+#include"input.h"
+class player
 {
 public:
+	player() = default;
+
+	~player() = default;
+
+	void update();
 };
 

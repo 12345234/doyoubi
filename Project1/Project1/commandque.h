@@ -6,13 +6,13 @@ class commandque
 public:
 	commandque() = default;
 
-	~commandque() =default;
+	~commandque();
 
-	[[nodiscard]] bool create() noexcept;
+	[[nodiscard]] bool create(const device& device) noexcept;
 
 	[[nodiscard]] ID3D12CommandQueue* get() const noexcept;
 
 private:
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue_{};
+	ID3D12CommandQueue* commandQueue{};
 };
 

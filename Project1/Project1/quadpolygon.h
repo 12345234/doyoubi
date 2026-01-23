@@ -1,22 +1,21 @@
-﻿#pragma once
+#pragma once
 
 #include "device.h"
 #include "commandlist.h"
 #include <DirectXMath.h>
-
-class TrianglePolygon final {
+class quadpolygon final {
 public:
+
     struct ConstBufferData {
-        DirectX::XMMATRIX world_{}; 
-        DirectX::XMFLOAT4 color_{}; 
+        DirectX::XMMATRIX world_{};
+        DirectX::XMFLOAT4 color_{};
     };
 
 public:
 
-    TrianglePolygon() = default;
+    quadpolygon() = default;
 
-    ~TrianglePolygon();
-
+    ~quadpolygon();
     [[nodiscard]] bool create(const device& device) noexcept;
     void draw(const commandlist& commandList) noexcept;
 
@@ -26,9 +25,9 @@ private:
     [[nodiscard]] bool createIndexBuffer(const device& device) noexcept;
 
 private:
-    ID3D12Resource* vertexBuffer_{};  
-    ID3D12Resource* indexBuffer_{};   
+    ID3D12Resource* vertexBuffer{};
+    ID3D12Resource* indexBuffer{};
 
-    D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {}; 
+    D3D12_VERTEX_BUFFER_VIEW vertexBufferView_ = {};
     D3D12_INDEX_BUFFER_VIEW  indexBufferView_ = {};
 };

@@ -1,20 +1,23 @@
 ﻿#pragma once
-#include"commandque.h"
-class swapchain
-{
+#include "DXGI.h"
+#include "commandque.h"
+#include "window.h"
+
+class swapchain final {
 public:
-	swapchain() = default;
 
-	~swapchain() = default;
+    swapchain() = default;
 
-	[[nodiscard]] bool create(const commandque& commandQueue) noexcept;
+    ~swapchain();
 
-	[[nodiscard]] IDXGISwapChain3* get() const noexcept;
+    [[nodiscard]] bool create(const DXGI& dxgi, const window& window, const commandque& commandQueue) noexcept;
 
-	[[nodiscard]] const DXGI_SWAP_CHAIN_DESC1& getDesc() const noexcept;
+    [[nodiscard]] IDXGISwapChain3* get() const noexcept;
+
+    [[nodiscard]] const DXGI_SWAP_CHAIN_DESC1& getDesc() const noexcept;
+
 
 private:
-	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain{};
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+    IDXGISwapChain3* swapChain_{};    
+    DXGI_SWAP_CHAIN_DESC1 swapChainDesc_{}; 
 };
-

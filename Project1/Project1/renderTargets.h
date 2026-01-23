@@ -4,20 +4,24 @@
 #include "swapchain.h"
 #include "DescriptorHeap.h"
 #include <vector>
-class renderTargets final
-{
+
+class render final {
 public:
-	renderTargets() = default;
+    render() = default;
 
-	~renderTargets();
+    ~render();
 
-	[[nodiscard]] bool createBackBuffer(const swapchain& swaphain)noexcept;
 
-	[[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE getDescriptorHandle(UINT index) const noexcept;
+    [[nodiscard]] bool createBackBuffer(const device& device, const swapchain& swapChain, const DescriptorHeap& heap) noexcept;
 
-	[[nodiscard]] ID3D12Resource* get(uint32_t index) const noexcept;
+    [[nodiscard]] D3D12_CPU_DESCRIPTOR_HANDLE getCpuDescriptorHandle(const device& device, const DescriptorHeap& heap, UINT index) const noexcept;
+
+
+    [[nodiscard]] ID3D12Resource* get(UINT index) const noexcept;
+
 
 private:
-	vector<Microsoft::WRL::ComPtr<ID3D12Resource>> renderTargets_;
+    std::vector<ID3D12Resource*> renderTargets_;
+
 };
 
