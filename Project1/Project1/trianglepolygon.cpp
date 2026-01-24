@@ -7,6 +7,11 @@ namespace {
         DirectX::XMFLOAT4 color;    
     };
 }
+Vertex triangleVertices[] = {
+        {  {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+        { {1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}},
+        {{-1.0f, -1.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}
+};
 
 TrianglePolygon::~TrianglePolygon() {
     if (vertexBuffer_) {
@@ -30,12 +35,8 @@ TrianglePolygon::~TrianglePolygon() {
     return true;
 }
 [[nodiscard]] bool TrianglePolygon::createVertexBuffer(const device& device) noexcept {
-    Vertex triangleVertices[] = {
-        {  {0.0f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-        { {0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}},
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
-    };
-
+    
+    
     const auto vertexBufferSize = sizeof(triangleVertices);
     D3D12_HEAP_PROPERTIES heapProperty{};
     heapProperty.Type = D3D12_HEAP_TYPE_UPLOAD;
@@ -146,4 +147,29 @@ void TrianglePolygon::draw(const commandlist& commandList) noexcept {
     commandList.get()->IASetIndexBuffer(&indexBufferView_);
     commandList.get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     commandList.get()->DrawIndexedInstanced(3, 1, 0, 0, 0);
+    
+}
+
+void TrianglePolygon::update()
+{
+    poss = triangleVertices->position;
+    float sp = 5.0f;
+    if (input::instance().getkey('W'))
+    {
+        poss.z += sp;
+    }
+    if (input::instance().getkey('S'))
+    {
+        poss.z -= sp;
+    }
+    if (input::instance().getkey('D'))
+    {
+        poss.x += sp;
+    }
+    if (input::instance().getkey('A'))
+    {
+        poss.x -= sp;
+    }
+    DirectX::XMVECTOR temp = DirectX::XMVectorSet(poss.x, poss.y, poss.z, 0.0f);
+    world_.r[3] = DirectX::XMVectorAdd(world_.r[3],temp);
 }

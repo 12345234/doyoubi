@@ -9,7 +9,6 @@ public:
         static input instance;
         return instance;
     }
-
     [[nodiscard]] bool getkey(uint16_t sKey) const noexcept;
 
     [[nodiscard]] bool getTrigger(uint16_t sKey) const noexcept;
@@ -22,6 +21,5 @@ private:
 
     ~input() = default;
 
-private:
     byte keystate[256];
 };

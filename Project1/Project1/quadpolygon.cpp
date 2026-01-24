@@ -8,7 +8,7 @@ namespace {
     };
 } 
 
-quadpolygon::~quadpolygon() {
+Quadpolygon::~Quadpolygon() {
     if (vertexBuffer) {
         vertexBuffer->Release();
         vertexBuffer = nullptr;
@@ -20,7 +20,7 @@ quadpolygon::~quadpolygon() {
     }
 }
 
-[[nodiscard]] bool quadpolygon::create(const device& device) noexcept {
+[[nodiscard]] bool Quadpolygon::create(const device& device) noexcept {
     if (!createVertexBuffer(device)) {
         return false;
     }
@@ -31,11 +31,11 @@ quadpolygon::~quadpolygon() {
     return true;
 }
 
-[[nodiscard]] bool quadpolygon::createVertexBuffer(const device& device) noexcept {
+[[nodiscard]] bool Quadpolygon::createVertexBuffer(const device& device) noexcept {
     Vertex vertices[] = {
         { {-0.5f, 0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
-        {  {0.5f, 0.5f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, 
-        {{-0.5f, -0.5f, 1.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, 
+        {  {0.5f, 0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
+        {{-0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
         { {0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
     };
 
@@ -91,7 +91,7 @@ quadpolygon::~quadpolygon() {
     return true;
 }
 
-[[nodiscard]] bool quadpolygon::createIndexBuffer(const device& device) noexcept {
+[[nodiscard]] bool Quadpolygon::createIndexBuffer(const device& device) noexcept {
     uint16_t indices[] = {
         0, 1, 2, 3 
     };
@@ -148,7 +148,7 @@ quadpolygon::~quadpolygon() {
     return true;
 }
 
-void quadpolygon::draw(const commandlist& commandList) noexcept {
+void Quadpolygon::draw(const commandlist& commandList) noexcept {
     commandList.get()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 
     commandList.get()->IASetIndexBuffer(&indexBufferView_);

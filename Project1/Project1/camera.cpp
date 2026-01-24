@@ -21,22 +21,13 @@ void camera::initialize() noexcept {
 }
 
 void camera::update() noexcept {
-    static float angle = 0.0f;
 
-    if (input::instance().getkey(VK_LEFT)) {
-        angle += eyeMoveSpeed_;
-        position.x = destTargetToView_ * std::sinf(angle);
-        position.z = destTargetToView_ * std::cosf(angle);
-    }
-    else if (input::instance().getkey(VK_RIGHT)) {
-        angle -= eyeMoveSpeed_;
-        position.x = destTargetToView_ * std::sinf(angle);
-        position.z = destTargetToView_ * std::cosf(angle);
-    }
     view = DirectX::XMMatrixLookAtLH(
         DirectX::XMLoadFloat3(&position),
         DirectX::XMLoadFloat3(&target),
         DirectX::XMLoadFloat3(&up));
+
+    
 }
 [[nodiscard]] DirectX::XMMATRIX XM_CALLCONV camera::viewMatrix() const noexcept {
     return view;

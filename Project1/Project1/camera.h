@@ -10,11 +10,8 @@ public:
         DirectX::XMMATRIX projection_{};  
     };
 
-public:
     camera() = default;
     ~camera() = default;
-
-public:
     void initialize() noexcept;
 
     void update() noexcept;

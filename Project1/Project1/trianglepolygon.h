@@ -3,6 +3,7 @@
 #include "device.h"
 #include "commandlist.h"
 #include <DirectXMath.h>
+#include"input.h"
 
 class TrianglePolygon final {
 public:
@@ -10,22 +11,23 @@ public:
         DirectX::XMMATRIX world_{}; 
         DirectX::XMFLOAT4 color_{}; 
     };
+    DirectX::XMFLOAT3 poss;
 
-public:
+    
+    
 
     TrianglePolygon() = default;
 
     ~TrianglePolygon();
-
+    void update();
     [[nodiscard]] bool create(const device& device) noexcept;
     void draw(const commandlist& commandList) noexcept;
-
 private:
     [[nodiscard]] bool createVertexBuffer(const device& device) noexcept;
 
     [[nodiscard]] bool createIndexBuffer(const device& device) noexcept;
-
-private:
+    
+    DirectX::XMMATRIX world_ = DirectX::XMMatrixIdentity();
     ID3D12Resource* vertexBuffer_{};  
     ID3D12Resource* indexBuffer_{};   
 

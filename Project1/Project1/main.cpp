@@ -88,13 +88,13 @@ public:
             assert(false && "三角形ポリゴンの作成に失敗しました");
             return false;
         }
-        triangleObjectInstance_.initialize({ .2f, 0.0f, -0.1f }, { 1,1,1,1 });
+        triangleObjectInstance_.initialize({ .3f, 0.0f, -0.1f }, { 1,1,1,1 });
 
         if (!quadPolygonInstance_.create(deviceInstance_)) {
             assert(false && "四角形ポリゴンの作成に失敗しました");
             return false;
         }
-        quadObjectInstance_.initialize({ -.2f, 0.0f, 0.1f }, { 1,1,1,1 });
+        quadObjectInstance_.initialize({ -.1f, 0.0f, 0.1f }, { 1,1,1,1 });
 
         if (!rootSignatureInstance_.create(deviceInstance_)) {
             assert(false && "ルートシグネチャの作成に失敗しました");
@@ -202,7 +202,7 @@ public:
             commandListInstance_.get()->SetPipelineState(piplineStateObjectInstance_.get());
 
             {
-                quadpolygon::ConstBufferData quadData{
+                Quadpolygon::ConstBufferData quadData{
                     DirectX::XMMatrixTranspose(quadObjectInstance_.world()),
                     quadObjectInstance_.color() };
                 UINT8* pQuadData{};
@@ -225,7 +225,9 @@ public:
                 commandListInstance_.get()->SetGraphicsRootDescriptorTable(1, trianglePolygonConstantBufferInstance_.getGpuDescriptorHandle());
 
                 trianglePolygonInstance_.draw(commandListInstance_);
+                
             }
+            trianglePolygonInstance_.update();
 
             auto rtToP = resourceBarrier(renderTargetInstance_.get(backBufferIndex), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
             commandListInstance_.get()->ResourceBarrier(1, &rtToP);
@@ -240,7 +242,7 @@ public:
             frameFenceValue_[backBufferIndex] = nextFenceValue_;
             nextFenceValue_++;
         }
-
+        
     }
 
     D3D12_RESOURCE_BARRIER resourceBarrier(ID3D12Resource* resource, D3D12_RESOURCE_STATES from, D3D12_RESOURCE_STATES to) noexcept {
@@ -283,7 +285,7 @@ private:
     camera         cameraInstance_{};               
     constantbuffer cameraConstantBufferInstance_{}; 
 
-    quadpolygon    quadPolygonInstance_{};                
+    Quadpolygon    quadPolygonInstance_{};                
     object         quadObjectInstance_{};                 
     constantbuffer quadPolygonConstantBufferInstance_{}; 
 

@@ -3,8 +3,14 @@
 #include "device.h"
 #include "commandlist.h"
 #include <DirectXMath.h>
-class quadpolygon final {
+class Quadpolygon final {
 public:
+
+    static Quadpolygon& instance()
+    {
+        static Quadpolygon instance;
+        return instance;
+    }
 
     struct ConstBufferData {
         DirectX::XMMATRIX world_{};
@@ -13,9 +19,9 @@ public:
 
 public:
 
-    quadpolygon() = default;
+    Quadpolygon() = default;
 
-    ~quadpolygon();
+    ~Quadpolygon();
     [[nodiscard]] bool create(const device& device) noexcept;
     void draw(const commandlist& commandList) noexcept;
 
