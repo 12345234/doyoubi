@@ -1,11 +1,10 @@
-#include "camera.h"
+﻿#include "camera.h"
 #include <cmath>
 
 #include "input.h"
 
 namespace {
-    constexpr float eyeMoveSpeed_ = 0.06f; 
-    constexpr float destTargetToView_ = -5.0f; 
+    constexpr float destTargetToView_ = -7.0f; 
 } 
 
 void camera::initialize() noexcept {

@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
+#include <basetsd.h>
 #include <DirectXMath.h>
+#include"quadpolygon.h"
 
 class object final {
 public:
@@ -15,7 +17,13 @@ public:
     ~object() = default;
 
     void initialize(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT4 color) noexcept;
-    void update() noexcept;
+
+    void update(DirectX::XMFLOAT3 pos,DirectX::XMFLOAT3 scale,DirectX::XMFLOAT4 a) noexcept;
+
+    void Bullet(DirectX::XMFLOAT3 pos);
+    void Bulletinstance();
+
+
     [[nodiscard]] DirectX::XMMATRIX world() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT4 color() const noexcept;
 

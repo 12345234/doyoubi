@@ -1,4 +1,4 @@
-#include "quadpolygon.h"
+ï»¿#include "quadpolygon.h"
 #include <cassert>
 
 namespace {
@@ -33,10 +33,10 @@ Quadpolygon::~Quadpolygon() {
 
 [[nodiscard]] bool Quadpolygon::createVertexBuffer(const device& device) noexcept {
     Vertex vertices[] = {
-        { {-0.5f, 0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
-        {  {0.5f, 0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
-        {{-0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
-        { {0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
+        { {-1.5f, 1.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
+        {  {1.5f, 1.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
+        {{-1.5f, -1.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
+        { {1.5f, -1.5f, 1.0f}, {1.0f, 1.0f, 0.0f, 1.0f}}, 
     };
 
     const auto vertexBufferSize = sizeof(vertices);
@@ -69,7 +69,7 @@ Quadpolygon::~Quadpolygon() {
         nullptr,
         IID_PPV_ARGS(&vertexBuffer));
     if (FAILED(res)) {
-        assert(false && "’¸“_ƒoƒbƒtƒ@‚Ìì¬‚É¸”s");
+        assert(false && "é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆã«å¤±æ•—");
         return false;
     }
 
@@ -77,7 +77,7 @@ Quadpolygon::~Quadpolygon() {
 
     res = vertexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&data));
     if (FAILED(res)) {
-        assert(false && "’¸“_ƒoƒbƒtƒ@‚Ìƒ}ƒbƒv‚É¸”s");
+        assert(false && "é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ãƒãƒƒãƒ—ã«å¤±æ•—");
         return false;
     }
 
@@ -126,14 +126,14 @@ Quadpolygon::~Quadpolygon() {
         nullptr,
         IID_PPV_ARGS(&indexBuffer));
     if (FAILED(res)) {
-        assert(false && "ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìì¬‚É¸”s");
+        assert(false && "ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ä½œæˆã«å¤±æ•—");
         return false;
     }
 
     uint16_t* data{};
     res = indexBuffer->Map(0, nullptr, reinterpret_cast<void**>(&data));
     if (FAILED(res)) {
-        assert(false && "ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìƒ}ƒbƒv‚É¸”s");
+        assert(false && "ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ãƒãƒƒãƒ—ã«å¤±æ•—");
         return false;
     }
 

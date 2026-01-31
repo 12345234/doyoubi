@@ -23,6 +23,7 @@
 #include "object.h"
 
 #include <cassert>
+#include <DirectXMath.h>
 
 class main final {
 public:
@@ -88,7 +89,6 @@ public:
             assert(false && "三角形ポリゴンの作成に失敗しました");
             return false;
         }
-        triangleObjectInstance_.initialize({ .3f, 0.0f, -0.1f }, { 1,1,1,1 });
 
         if (!quadPolygonInstance_.create(deviceInstance_)) {
             assert(false && "四角形ポリゴンの作成に失敗しました");
@@ -108,8 +108,6 @@ public:
             assert(false && "パイプラインステートオブジェクトの作成に失敗しました");
             return false;
         }
-
-
         cameraInstance_.initialize();
 
         if (!constantBufferDescriptorHeapInstance_.create(deviceInstance_, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 3, true)) {
@@ -144,8 +142,8 @@ public:
     void loop() noexcept {
         while (windowInstance_.messageLoop()) {
             cameraInstance_.update();
-            triangleObjectInstance_.update();
-            quadObjectInstance_.update();
+            
+            triangleObjectInstance_.update({.1f, 0.0f, -1.0f}, { .0f, 0.0f, 0.0f }, { 1,1,1,1 });
 
             const auto backBufferIndex = swapChainInstance_.get()->GetCurrentBackBufferIndex();
 
@@ -223,11 +221,9 @@ public:
                 memcpy_s(pTriangleData, sizeof(triangleData), &triangleData, sizeof(triangleData));
                 trianglePolygonConstantBufferInstance_.constantbuffer1()->Unmap(0, nullptr);
                 commandListInstance_.get()->SetGraphicsRootDescriptorTable(1, trianglePolygonConstantBufferInstance_.getGpuDescriptorHandle());
-
                 trianglePolygonInstance_.draw(commandListInstance_);
                 
             }
-            trianglePolygonInstance_.update();
 
             auto rtToP = resourceBarrier(renderTargetInstance_.get(backBufferIndex), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
             commandListInstance_.get()->ResourceBarrier(1, &rtToP);

@@ -19,7 +19,6 @@ public:
     TrianglePolygon() = default;
 
     ~TrianglePolygon();
-    void update();
     [[nodiscard]] bool create(const device& device) noexcept;
     void draw(const commandlist& commandList) noexcept;
 private:
