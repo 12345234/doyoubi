@@ -11,6 +11,11 @@ public:
         DirectX::XMFLOAT4 color_{};  
     };
 
+    struct BulletBufferData {
+        DirectX::XMMATRIX Bworld_{};
+        DirectX::XMFLOAT4 Bcolor_{};
+    };
+
 public:
     object() = default;
 
@@ -30,6 +35,11 @@ public:
 private:
     DirectX::XMMATRIX world_ = DirectX::XMMatrixIdentity();               
     DirectX::XMFLOAT4 color_ = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f); 
+
+    DirectX::XMMATRIX Bworld_ = DirectX::XMMatrixIdentity();
+    DirectX::XMFLOAT4 Bcolor_ = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+
+
 
     float move{};  
 };
