@@ -18,6 +18,7 @@
 
 #include "trianglepolygon.h"
 #include "quadpolygon.h"
+#include "Bullet.h"
 
 #include "camera.h"
 #include "object.h"
@@ -85,6 +86,12 @@ public:
             return false;
         }
 
+        if (!BulletpolygonInstance.create(deviceInstance_))
+        {
+            assert(false&&"弾の生成に失敗");
+            return false;
+        }
+        //BulletInstance.initializeBullet({ -.1f, 0.0f, 0.1f }, { 1,1,1,1 });
         if (!trianglePolygonInstance_.create(deviceInstance_)) {
             assert(false && "三角形ポリゴンの作成に失敗しました");
             return false;
@@ -94,7 +101,6 @@ public:
             assert(false && "四角形ポリゴンの作成に失敗しました");
             return false;
         }
-        quadObjectInstance_.initialize({ -.1f, 0.0f, 0.1f }, { 1,1,1,1 });
 
         if (!rootSignatureInstance_.create(deviceInstance_)) {
             assert(false && "ルートシグネチャの作成に失敗しました");
@@ -144,7 +150,6 @@ public:
             cameraInstance_.update();
             
             triangleObjectInstance_.update({.1f, 0.0f, -1.0f}, { .0f, 0.0f, 0.0f }, { 1,1,1,1 });
-
             const auto backBufferIndex = swapChainInstance_.get()->GetCurrentBackBufferIndex();
 
             if (frameFenceValue_[backBufferIndex] != 0) {
@@ -224,6 +229,19 @@ public:
                 trianglePolygonInstance_.draw(commandListInstance_);
                 
             }
+           /* {
+                Bullet::BulletData BData{
+                    DirectX::XMMatrixTranspose(BulletInstance.Bworld()),
+                    BulletInstance.Bcolor() };
+                UINT8* pTriangleData{};
+                BulletBufer.constantbuffer1()->Map(0, nullptr, reinterpret_cast<void**>(&pTriangleData));
+                memcpy_s(pTriangleData, sizeof(BData), &BData, sizeof(BData));
+                BulletBufer.constantbuffer1()->Unmap(0, nullptr);
+                commandListInstance_.get()->SetGraphicsRootDescriptorTable(1, BulletBufer.getGpuDescriptorHandle());
+                BulletpolygonInstance.draw(commandListInstance_);
+
+            }*/
+
 
             auto rtToP = resourceBarrier(renderTargetInstance_.get(backBufferIndex), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
             commandListInstance_.get()->ResourceBarrier(1, &rtToP);
@@ -274,9 +292,13 @@ private:
     pipline piplineStateObjectInstance_{};           
     DescriptorHeap     constantBufferDescriptorHeapInstance_{};  
 
+    Bullet          BulletpolygonInstance{};
+    object          BulletInstance{};
     TrianglePolygon trianglePolygonInstance_{};                
     object          triangleObjectInstance_{};                 
     constantbuffer  trianglePolygonConstantBufferInstance_{};  
+
+    constantbuffer BulletBufer{};
 
     camera         cameraInstance_{};               
     constantbuffer cameraConstantBufferInstance_{}; 

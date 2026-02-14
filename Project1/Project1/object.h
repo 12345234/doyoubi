@@ -22,15 +22,20 @@ public:
     ~object() = default;
 
     void initialize(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT4 color) noexcept;
+    void initializeBullet(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT4 color) noexcept;
+
 
     void update(DirectX::XMFLOAT3 pos,DirectX::XMFLOAT3 scale,DirectX::XMFLOAT4 a) noexcept;
 
-    void Bullet(DirectX::XMFLOAT3 pos);
-    void Bulletinstance();
+    void Bullet(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 scale, DirectX::XMFLOAT4 a) noexcept;
+
 
 
     [[nodiscard]] DirectX::XMMATRIX world() const noexcept;
     [[nodiscard]] DirectX::XMFLOAT4 color() const noexcept;
+
+    [[nodiscard]] DirectX::XMMATRIX Bworld() const noexcept;
+    [[nodiscard]] DirectX::XMFLOAT4 Bcolor() const noexcept;
 
 private:
     DirectX::XMMATRIX world_ = DirectX::XMMatrixIdentity();               
